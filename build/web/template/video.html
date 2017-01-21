@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Mouldifi - A fully responsive, HTML5 based admin theme">
+<meta name="keywords" content="Responsive, HTML5, admin theme, business, professional, Mouldifi, web design, CSS3">
+<title>Videos</title>
+<script src="js/jquery.min.js"></script>
+<script src="js/ajax.js"></script>
+
+<!-- Site favicon -->
+<link rel='shortcut icon' type='image/x-icon' href='images/shootShare.ico' />
+<!-- /site favicon -->
+
+<!-- Entypo font stylesheet -->
+<link href="css/entypo.css" rel="stylesheet">
+<!-- /entypo font stylesheet -->
+
+<!-- Font awesome stylesheet -->
+<link href="css/font-awesome.min.css" rel="stylesheet">
+<!-- /font awesome stylesheet -->
+
+<!-- Bootstrap stylesheet min version -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- /bootstrap stylesheet min version -->
+
+<!-- Mouldifi core stylesheet -->
+<link href="css/mouldifi-core.css" rel="stylesheet">
+<!-- /mouldifi core stylesheet -->
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+    
+$(document).ready(function() 
+	{
+		var files=[];
+    var user = getUrlVars()[0];
+		var myFiles = "http://localhost:8080/shootShare/template/myFiles.html?"+user;
+		var withFreinds = "http://localhost:8080/shootShare/template/withFreinds.html?"+user;
+		var photo = "http://localhost:8080/shootShare/template/photo.html?"+user;
+		var video = "http://localhost:8080/shootShare/template/video.html?"+user;
+		var freinds = "http://localhost:8080/shootShare/template/freinds.html?"+user;
+		var profile = "http://localhost:8080/shootShare/template/profile.html?"+user;
+
+		document.getElementById("myFiles").href = myFiles;
+		document.getElementById("withFreinds").href = withFreinds;
+		document.getElementById("photo").href = photo;
+		document.getElementById("video").href = video;
+		document.getElementById("freinds").href = freinds;
+		document.getElementById("profile").href = profile;
+            
+        					$(window).load(function() 
+                    		{
+                        
+                                $.ajax({
+                                  url : 'http://localhost:8080/mavenproject1/webapi/profiles/'+user+'/Files/Type/video',
+                                  type : 'Get',
+                                  cache : false,
+                                  contentType: "application/json; charset=utf-8",
+                                  processData : false,
+                                  dataType: 'JSON',
+                                  data: files,
+                                  success : function(data, textStatus, jqXHR) {
+                                      	var i = 0;
+                                        data.forEach(function (d/*, index*/ ){
+                                           $.ajax({
+                          						url : 'http://localhost:8080/mavenproject1/webapi/profiles/'+user+'/Files/Video/'+d.id,
+                          						type : 'Get',
+					                                cache : false,
+					                                contentType: false,
+					                                processData : false,
+							                          success : function(data, textStatus, jqXHR) {
+							                          	var str = d.file_name;
+							                          	var res = str.split("/");
+					
+														var div = $("<div id="+"videoList"+" class="+"col-lg-4 col-sm-8"+"></div>")
+														div.append("<div class="+"card"+">");
+														div.append("<div class="+"card-header"+"><div class="+"card-photo"+"><img class="+"img-circle avatar"+" src="+"images/man-3.jpg"+" alt="+d.created_by+" title="+d.created_by+"></div></div>");
+														div.append("<div class="+"card-short-description"+"><h5><span class="+"user-name"+"><a href="+"#/"+">"+d.created_by+"</div></div>");
+														div.append("object width="+"250"+" height="+"250"+" data="+"file-upload/"+d.file_name+" class="+"center"+"></object>");
+														div.append("<div class="+"card-footer clearfix"+"><p>"+res[1]+"</p><ul class="+"list-inline"+"><li><p>"+d.date+"</p></li><li class="+"pull-right"+"><button id="+"deleteVideo"+i+" value="+d.id+" class="+"btn btn-primary"+" onclick=deleteVideo("+i+")><i class="+"icon-trash"+"></i></button></li><li class="+"pull-right"+"><button id="+"downloadVideo"+i+" value="+d.id+" onclick=downloadVideo("+i+") class="+"btn btn-primary"+"><i class="+"icon-download"+"></i></button></li></ul></div></div>");
+
+														$("#videoList").append(div);
+
+							
+
+							                          },
+							                          error : function(jqXHR, textStatus, errorThrown) {
+							                                $("#messages").append("<li style='color: red;'>" + "erreur" + "</li>");
+							                          }
+							                        });
+                                                                })
+                                  },
+                                  error : function(jqXHR, textStatus, errorThrown) {
+                                        $("#messages").append("<li style='color: red;'>" + "erreur" + "</li>");
+                                  }
+                                });
+                    });
+                    
+        $("#uploadVideo").click(function() 
+            {
+                $('input[name="uploadFile"]').each(function(index, value) 
+                { console.log("aaaaa");
+                    
+                    var file = value.files[0];
+                    if(file) 
+                    {
+                        var formData = new FormData();
+                        formData.append('fichier', file);
+                        formData.append('created_by', user);    
+                        formData.append('type', "video");  
+                        $.ajax({
+                          url : 'http://localhost:8080/mavenproject1/webapi/profiles/'+user+'/Files/upload',
+                          type : 'POST',
+                          data : formData,
+                          cache : false,
+                          contentType : false,
+                          processData : false,
+                          success : function(data, textStatus, jqXHR) {
+                                window.location.href="http://localhost:8080/mavenproject1/webapi/profiles/"+user+"/Files"
+                          },
+                          error : function(jqXHR, textStatus, errorThrown) {
+                                $("#messages").append("<li style='color: red;'>" + textStatus + "</li>");
+                          }
+                        });
+                    }
+                });
+            });
+            
+            });
+
+</script>
+
+</head>
+<body>
+
+<!-- Page container -->
+<div class="page-container">
+
+  <!-- Page Sidebar -->
+  <div class="page-sidebar">
+  
+  		<!-- Site header  -->
+		<header class="site-header">
+		  <div class="site-logo"><a href="#"><img src="images/shootShare.png" width="50" height="50" alt="Shoot Share" title="Shoot Share"><h4>   <b> Shoot Share</b></h4></a></div>
+		  <div class="sidebar-collapse hidden-xs"><a class="sidebar-collapse-icon" href="#"><i class="icon-menu"></i></a></div>
+		  <div class="sidebar-mobile-menu visible-xs"><a data-target="#side-nav" data-toggle="collapse" class="mobile-menu-icon" href="#"><i class="icon-menu"></i></a></div>
+		</header>
+		<!-- /site header -->
+		
+		<!-- Main navigation -->
+				<ul id="side-nav" class="main-menu navbar-collapse collapse">
+			<li class="has-sub active "><a href="index.html"><i class="icon-layout"></i><span class="title">ALL Files</span></a>
+				<ul class="nav">
+					<li><a href="" id="myFiles"><span class="title">My files </span></a></li>
+					<li><a href="" id="withFreinds"><span class="title">With freinds </span></a></li>
+				</ul>
+			</li>
+			<li class="has-sub"><a href="collapsed-sidebar.html"><i class="icon-layout"></i><span class="title">Share Files</span></a>
+				<ul class="nav collapse">
+					<li><a href="" id="photo"><span class="title">Photos</span></a></li>
+					<li><a href="" id="video"><span class="title">Videos</span></a></li>
+				</ul>
+			</li>
+			<li class="has-sub"><a href="panels.html"><i class="icon-newspaper"></i><span class="title">Friends</span></a>
+				<ul class="nav collapse">
+					<li><a href="" id="freinds"><span class="title">List of freinds</span></a></li>
+				</ul>
+			</li>
+		</ul>
+		<!-- /main navigation -->		
+  </div>
+  <!-- /page sidebar -->
+  
+  <!-- Main container -->
+  <div class="main-container">
+  
+	<!-- Main header -->
+    <div class="main-header row">
+      <div class="col-sm-6 col-xs-7">
+	  
+		<!-- User info -->
+        <ul class="user-info pull-left">          
+          <li class="profile-info dropdown"><a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false"> <img width="44" class="img-circle avatar" alt="" src="images/man-3.jpg">John Henderson <span class="caret"></span></a>
+		  
+			<!-- User action menu -->
+			<ul class="dropdown-menu">             
+              <li><a href="profile.html" id="profile"><i class="icon-user"></i>My profile</a></li>
+			  <li class="divider"></li>
+			  <li><a href="login.html"><i class="icon-logout"></i>Logout</a></li>
+            </ul>
+			<!-- /user action menu -->
+			
+          </li>
+        </ul>
+		<!-- /user info -->
+		
+      </div>
+	  
+      <div class="col-sm-6 col-xs-5">
+	  	<div class="pull-right">
+			<!-- User alerts -->
+			
+			<!-- /user alerts -->
+			
+		</div>
+      </div>
+    </div>
+	<!-- /main header -->
+	<div class="form-group pull-right"> 
+						<div class="col-sm-offset-2 col-sm-10"> 
+							<input id="upload" value="Upload video" class="btn btn-primary" type="submit" aria-expanded="false" data-toggle="modal" data-target="#modal-1"/>
+						</div> 
+	</div>
+	<!-- Main content -->
+	<div class="main-content">
+		<h1 class="page-title">Videos</h1>
+		<div class="row">		
+			<div class="col-md-12">
+			
+				<!-- Card grid view -->
+				<div class="cards-container box-view grid-view">
+					<div id="videoList" class="row">										
+						
+						
+			</div>
+		</div>
+		</div>
+		</div>	
+
+				<!--Basic Modal-->
+		<div id="modal-1" class="modal fade" tabindex="-1" role="dialog">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Upload video</h4>
+		      </div>
+		      <div class="modal-body">
+		        <input name="uploadFile" value="Upload" type="file" class="btn">
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button id="uploadVideo" type="button" class="btn btn-primary" data-dismiss="modal">Upload</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		<!--End Basic Modal-->
+
+		<!-- Footer -->
+		<footer class="footer-main"> 
+			
+		</footer>	
+		<!-- /footer -->
+		
+	  </div>
+	  <!-- /main content -->
+	  
+  </div>
+  <!-- /main container -->
+  
+</div>
+<!-- /page container -->
+
+<!--Load JQuery-->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/plugins/metismenu/jquery.metisMenu.js"></script>
+<script src="js/functions.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+				function deleteVideo(i){
+			    	var idfile = $("#deleteVideo"+i+"").val();
+
+				                $.ajax({
+				                  type : 'Delete',
+				                  url : 'http://localhost:8080/mavenproject1/webapi/profiles/'+user.id+'/Files/'+idfile,				                  
+				                  cache : false,
+				                  contentType: "application/json; charset=utf-8",
+				                  dataType: 'JSON',
+				                  success : function(data, textStatus, jqXHR) {
+				                        	window.location.href="video.html"                      
+				                  },
+				                  error : function(jqXHR, textStatus, errorThrown) {
+				                        $("#messages").append("<li style='color: red;'>" + "erreur" + "</li>");
+				                  }
+				                });
+				            }
+				function downloadVideo(i){
+			    	var idfile = $("#downloadVideo"+i+"").val();
+			    	console.log(idfile);
+			      		var sendInfo = {
+			           		id: idfile
+			       						};
+
+				                $.ajax({
+		                          url : '',
+		                          type : 'Get',
+		                          cache : false,
+		                          contentType : false,
+		                          processData : false,
+		                          contentType: "application/json; charset=utf-8",
+            					  dataType: "json",
+		                          data: JSON.stringify(sendInfo),
+		                          success : function(data, textStatus, jqXHR) {
+		                               console.log(data); 
+		                                $("#messages").append("<li>" + "Telechargeent reussi" + "</li>");
+		                          },
+		                          error : function(jqXHR, textStatus, errorThrown) {
+		                                $("#messages").append("<li style='color: red;'>" + "erreur" + "</li>");
+		                          }
+		                        });
+				            }
+				function getUrlVars()
+					{
+					    var vars = [], hash;
+					    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+					    for(var i = 0; i < hashes.length; i++)
+					    {
+					        hash = hashes[i].split('=');
+					        vars.push(hash[0]);
+					        vars[hash[0]] = hash[1];
+					    }
+					    return vars;
+					}
+</script>

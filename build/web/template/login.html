@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Mouldifi - A fully responsive, HTML5 based admin theme">
+<meta name="keywords" content="Responsive, HTML5, admin theme, business, professional, Mouldifi, web design, CSS3">
+<title>Shoot Share | Login</title>
+
+<script src="js/jquery.min.js"></script>
+<!-- Site favicon -->
+<link rel='shortcut icon' type='image/x-icon' href='images/shootShare.ico' />
+<!-- /site favicon -->
+
+<!-- Entypo font stylesheet -->
+<link href="css/entypo.css" rel="stylesheet">
+<!-- /entypo font stylesheet -->
+
+<!-- Font awesome stylesheet -->
+<link href="css/font-awesome.min.css" rel="stylesheet">
+<!-- /font awesome stylesheet -->
+
+<!-- Bootstrap stylesheet min version -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- /bootstrap stylesheet min version -->
+
+<!-- Mouldifi core stylesheet -->
+<link href="css/mouldifi-core.css" rel="stylesheet">
+<!-- /mouldifi core stylesheet -->
+
+<link href="css/mouldifi-forms.css" rel="stylesheet">
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+$(document).ready(function() 
+	{var user ={};
+		
+        $("#login").click(function() 
+	    {
+	    	console.log("aaaaa");
+	    	var email = $("#email").val();
+	    	var password = $("#password").val();
+
+	                $.ajax({
+	                  url : 'http://localhost:8080/mavenproject1/webapi/profiles/Authentification',
+	                  type : 'Get',
+	                  cache : false,
+	                  contentType: "application/json; charset=utf-8",
+	                  processData : false,
+	                  dataType: 'JSON',
+	                  beforeSend: function (xhr) {
+                            xhr.setRequestHeader ("Authorization", "Basic " + btoa(email + ": " + password));
+                                },
+	                  success : function(data, textStatus, jqXHR) {
+
+	                  		user=data;
+	                        console.log("Authorization= Basic " + btoa(email + ": " + password));
+                            document.cookie = "Authorization= Basic " + btoa(email + ": " + password);
+
+                            window.location.href="http://localhost:8080/shootShare/template/myFiles.html?"+user.id;
+                            console.log(user.id);                     
+	                  },
+	                  error : function(jqXHR, textStatus, errorThrown) {
+	                        $("#messages").append("<p style='color: red;'>" + "Incorrect email or password" + "</p>");
+	                  }
+	                });
+	    });
+
+
+             }); 
+</script>
+
+</head>
+<body class="login-page">
+<div class="login-container">
+	<div class="login-branding">
+		<a href="index.html" style="color:white"><img src="images/shootShare.png" width="50" height="50" alt="Shoot Share" title="Shoot Share"><h2><b>Shoot Share</b></h2></a>
+	</div>
+	<div class="login-content">
+		<h2><strong>Welcome</strong>, please login</h2>                      
+			<div class="form-group">
+				<input id="email" type="text" placeholder="Email" class="form-control">
+			</div>                        
+			<div class="form-group">
+				<input id="password" type="password" placeholder="Password" class="form-control">
+			</div>
+			<div class="form-group">
+				<button id="login" name="login" value="Login" class="btn btn-primary btn-block"> LOGIN </button>
+			</div>
+			<p class="text-center"><a href="forgot-password.html">Forgot your password?</a></p> 
+			<p class="text-center"><a href="register.html">Register</a></p>                        
+		<div id="message"></div>
+	</div>
+</div>
+<!--Load JQuery-->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+</body>
+</html>
